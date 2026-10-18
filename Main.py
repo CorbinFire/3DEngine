@@ -125,11 +125,34 @@ class Player(Point):
     def calculatePlace(self,point):
         X,Y,Z = point.getXpos(),point.getYpos(),point.getZpos()
         Xfc,Yfc,Zfc = self.getXpos()-point.getXpos(),self.getYpos()-point.getYpos(),self.getZpos()-point.getZpos()
-        if Zfc >= 0:
+        R = math.sqrt(Zfc**2+Xfc**2)
+        ta = -math.degrees(math.asin(Zfc/R))+self.getRotation()%360
+        zm=-1
+        xm=1
+        print(ta," ",Zfc," ",Xfc," ",R)
+        if -Zfc<0:
+            if -Xfc<0:
+                ta+=180
+                xm=-1
+                zm=1
+            else:
+                ta=360-ta
+                zm=1
+        else:
+            if -Xfc<0:
+                ta=180-ta
+                xm=-1
+            else:
+                ta+=0
+        # print(ta," ",Zfc," ",Xfc)
+        Zfc = math.sin(math.radians(ta))*R*zm
+        Xfc = math.cos(math.radians(ta))*R*xm
+        print(ta," ",Zfc," ",Xfc,"\n")
+        if Zfc == 0:
             Zfc=0.01
         RatioSumX = (-Zfc-Xfc)/(-Zfc*2)
         RatioSumY = (-Zfc-Yfc)/(-Zfc*2)
-        print(RatioSumX," ",RatioSumY)
+        # print(RatioSumX," ",RatioSumY)
         return (RatioSumX*Width,RatioSumY*Hieght)
     
     def calculateAverageDistanceOfPolygon(self,polypoints,player):
@@ -153,12 +176,12 @@ class Player(Point):
 
 player1 = Player()
 cube = Cube(300,200,50,20)
-shapes = [Cube(200,700,50,20),Cube(400,700,30,10),Cube(400,200,30,20),Cube(1200,200,500,490)]
+shapes = [Cube(200,700,50,20),Cube(400,700,30,10),Cube(400,200,100,20),Cube(1200,200,500,490)]
 # points = [Point(Width/2-100,Hieght/2-200,5),Point(Width/2-100,Hieght/2-200,10),Point(Width/2-100,Hieght/2-200,20),Point(Width/2-100,Hieght/2-200,30),Point(Width/2-100,Hieght/2-200,40),Point(Width/2-100,Hieght/2-200,50),Point(Width/2-100,Hieght/2-200,60),Point(Width/2-100,Hieght/2-200,70),Point(Width/2-100,Hieght/2-200,80),Point(Width/2-100,Hieght/2-200,90)]
 running = True
 
 while running == True:
-    time.sleep(0.05)
+    # time.sleep(0.05)
     wn.fill((0,0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -170,11 +193,11 @@ while running == True:
     # print(keys[pygame.K_w])
     MoveMultiplyer = 1
     if keys[pygame.K_LSHIFT]:
-        MoveMultiplyer = 5
+        MoveMultiplyer = 20
     if keys[pygame.K_w]:
-        player1.setZpos(player1.getZpos()+1*MoveMultiplyer)
+        player1.setZpos(player1.getZpos()+5*MoveMultiplyer)
     if keys[pygame.K_s]:
-        player1.setZpos(player1.getZpos()-1*MoveMultiplyer)
+        player1.setZpos(player1.getZpos()-5*MoveMultiplyer)
     if keys[pygame.K_d]:
         player1.setXpos(player1.getXpos()+5*MoveMultiplyer)
     if keys[pygame.K_a]:
@@ -183,10 +206,11 @@ while running == True:
         player1.setYpos(player1.getYpos()-5*MoveMultiplyer)
     if keys[pygame.K_LCTRL]:
         player1.setYpos(player1.getYpos()+5*MoveMultiplyer)
-    # if keys[pygame.K_c]:
-    #     player1.setRotation(player1.getRotation()+0.01*MoveMultiplyer)
-    # if keys[pygame.K_v]:
-    #     player1.setRotation(player1.getRotation()-0.01*MoveMultiplyer)
+    if keys[pygame.K_c]:
+        player1.setRotation(player1.getRotation()+0.1*MoveMultiplyer)
+    if keys[pygame.K_v]:
+        player1.setRotation(player1.getRotation()-0.1*MoveMultiplyer)
+
     def CADP(x):
         return player1.calculateAverageDistanceOfShape(x,player1)*-1
     shapes=sorted(shapes,key = CADP)
