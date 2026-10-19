@@ -176,8 +176,8 @@ class Player(Point):
             else:
                 ta+=0
                 # print(ta," ",Zfc," ",Xfc)
-                Zfc = math.sin(math.radians(ta))*R*zm
-                Yfc = math.cos(math.radians(ta))*R*ym
+        Zfc = math.sin(math.radians(ta))*R*zm
+        Yfc = math.cos(math.radians(ta))*R*ym
         print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
         if Zfc == 0:
             Zfc=0.01
@@ -242,12 +242,12 @@ while running == True:
         player1.setYpos(player1.getYpos()-5*MoveMultiplyer)
     if keys[pygame.K_LCTRL]:
         player1.setYpos(player1.getYpos()+5*MoveMultiplyer)
-    if keys[pygame.K_c]:
-        player1.setXRotation(player1.getXRotation()+0.1*MoveMultiplyer)
-    if keys[pygame.K_v]:
-        player1.setXRotation(player1.getXRotation()-0.1*MoveMultiplyer)
-    # player1.setXRotation(player1.getXRotation()+(Width/2-mouse.get_pos()[0])*0.01)
-    # player1.setYRotation(player1.getYRotation()+(Hieght/2-mouse.get_pos()[1])*0.01)
+    # if keys[pygame.K_c]:
+    #     player1.setXRotation(player1.getXRotation()+0.1*MoveMultiplyer)
+    # if keys[pygame.K_v]:
+    #     player1.setYRotation(player1.getYRotation()-0.1*MoveMultiplyer)
+    player1.setXRotation(player1.getXRotation()+(Width/2-mouse.get_pos()[0])*0.01)
+    player1.setYRotation(player1.getYRotation()+(Hieght/2-mouse.get_pos()[1])*0.01)
 
     def CADP(x):
         return player1.calculateAverageDistanceOfShape(x,player1)*-1
@@ -264,7 +264,7 @@ while running == True:
     # player1.printXpos()
     # wn.fill((255,255,255),[x/20,y/20,x*18/20,y*18/20])
     ####################################################
-    # mouse.set_pos(Width/2,Hieght/2)
+    mouse.set_pos(Width/2,Hieght/2)
     pygame.display.flip()
     
 # print(-1%360)
