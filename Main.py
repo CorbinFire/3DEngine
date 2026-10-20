@@ -42,6 +42,10 @@ class Point:
     def printZpos(self):
         print(self.Zpos)
 
+    def displayPoint(self,player):
+        player.DisplayPoint(self)
+
+
 class Cube(Point):
     def __init__(self, x, y, z, radius):
         super().__init__(x, y, z)
@@ -109,6 +113,57 @@ class Cube(Point):
             # print(p1)
             player.DisplayPolygon(p1[1],p1[0])
 
+class T(Point):
+    def __init__(self, x, y, z, radius):
+        super().__init__(x, y, z)
+        self.radius = radius
+        point1 = Point(x,y+radius,z,"1")
+        point2 = Point(x-radius,y+radius,z+radius,"2")
+        point3 = Point(x,y-radius,z+radius,"3")
+        point4 = Point(x+radius,y,z+radius,"4")
+        self.points = [point1,point2,point3,point4]
+        self.polygons = {(random.randint(0,255),random.randint(0,255),random.randint(0,255)):[point1,point2,point3],
+                         (random.randint(0,255),random.randint(0,255),random.randint(0,255)):[point1,point2,point4],
+                         (random.randint(0,255),random.randint(0,255),random.randint(0,255)):[point2,point3,point4],
+                         (random.randint(0,255),random.randint(0,255),random.randint(0,255)):[point1,point3,point4]}
+
+    def getRadius(self):
+        return self.radius
+    def setRadius(self,newRadius):
+        self.radius = newRadius
+    def printRadius(self):
+        print(self.radius)
+
+    def getPoints(self):
+        return self.points
+    def printPoints(self):
+        print(self.points)
+
+    def getPolygons(self):
+        return self.polygons.items()
+    def printPolygons(self):
+        print(self.polygons.items())
+
+    def getPolyColors(self):
+        return self.polygons.keys()
+    def printPolyColors(self):
+        print(self.polygons.keys())
+    
+    def displayNonSolidVersion(self,player):
+        for p1 in self.getPoints():
+            player.DisplayPoint(p1)
+            # print(player1.calculatePlace(p1))
+    def displaySolidVersion(self,player):
+        def CADP(x):
+            return player.calculateAverageDistanceOfPolygon(x,player)*-1
+        pts=sorted(self.getPolygons(),key = CADP)
+        # print([[[y.getXpos(),y.getYpos(),y.getZpos()] for y in x] for x in pts])
+        # print([[y.getID() for y in x] for x in pts])
+        # print([player.calculateAverageDistanceOfPolygon(x,player) for x in pts])
+        
+        for p1 in pts:
+            # print(p1)
+            player.DisplayPolygon(p1[1],p1[0])
 
 class Player(Point):
     def __init__(self):
@@ -133,52 +188,69 @@ class Player(Point):
     def calculatePlace(self,point):
         X,Y,Z = point.getXpos(),point.getYpos(),point.getZpos()
         Xfc,Yfc,Zfc = self.getXpos()-point.getXpos(),self.getYpos()-point.getYpos(),self.getZpos()-point.getZpos()
+        def leftoverextra():
+            # R = math.sqrt(Zfc**2+Xfc**2)
+            # ta = -math.degrees(math.asin(Zfc/R))+self.getXRotation()%360
+            # zm=-1
+            # xm=1
+            # print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
+            # if -Zfc<0:
+            #     if -Xfc<0:
+            #         ta+=180
+            #         xm=-1
+            #         zm=1
+            #     else:
+            #         ta=360-ta
+            #         zm=1
+            # else:
+            #     if -Xfc<0:
+            #         ta=180-ta
+            #         xm=-1
+            #     else:
+            #         ta+=0
+            # # print(ta," ",Zfc," ",Xfc)
+            # e=1
+            # m=0
+            # if Xfc<0:
+            #     e=-1
+            #     m=-100
+            # Zfc = math.sin(math.radians(ta%360))*R*zm
+            # Xfc = math.cos(math.radians(ta%360))*R*xm*e#+m
+            # ################## Rotation for y
+            # R = math.sqrt(Zfc**2+Yfc**2)
+            # ta = -math.degrees(math.asin(Zfc/R))+self.getYRotation()%360
+            # zm=-1
+            # ym=1
+            # print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
+            # if -Zfc<0:
+            #     if -Yfc<0:
+            #         ta+=180
+            #         ym=-1
+            #         zm=1
+            #     else:
+            #         ta=360-ta
+            #         zm=1
+            # else:
+            #     if -Yfc<0:
+            #         ta=180-ta
+            #         ym=-1
+            #     else:
+            #         ta+=0
+            #         # print(ta," ",Zfc," ",Xfc)
+            # e=1
+            # m=0
+            # if Yfc<0:
+            #     e=-1
+            #     m=-100
+            # Zfc = math.sin(math.radians(ta%360))*R*zm
+            # Yfc = math.cos(math.radians(ta%360))*R*ym*e#+m
+            # print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
+            return
+
         R = math.sqrt(Zfc**2+Xfc**2)
-        ta = -math.degrees(math.asin(Zfc/R))+self.getXRotation()%360
-        zm=-1
-        xm=1
-        print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
-        if -Zfc<0:
-            if -Xfc<0:
-                ta+=180
-                xm=-1
-                zm=1
-            else:
-                ta=360-ta
-                zm=1
-        else:
-            if -Xfc<0:
-                ta=180-ta
-                xm=-1
-            else:
-                ta+=0
-        # print(ta," ",Zfc," ",Xfc)
-        Zfc = math.sin(math.radians(ta))*R*zm
-        Xfc = math.cos(math.radians(ta))*R*xm
-        ################## Rotation for y
-        R = math.sqrt(Zfc**2+Yfc**2)
-        ta = -math.degrees(math.asin(Zfc/R))+self.getYRotation()%360
-        zm=-1
-        ym=1
-        print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
-        if -Zfc<0:
-            if -Yfc<0:
-                ta+=180
-                ym=-1
-                zm=1
-            else:
-                ta=360-ta
-                zm=1
-        else:
-            if -Yfc<0:
-                ta=180-ta
-                ym=-1
-            else:
-                ta+=0
-                # print(ta," ",Zfc," ",Xfc)
-        Zfc = math.sin(math.radians(ta))*R*zm
-        Yfc = math.cos(math.radians(ta))*R*ym
-        print(ta," ",Zfc," ",Yfc," ",Xfc," ",R)
+        a = (self.getXRotation()+90)%360
+        Zfc = math.sin(a)*R
+        Xfc = math.cos(a)*R
         if Zfc == 0:
             Zfc=0.01
         RatioSumX = (-Zfc-Xfc)/(-Zfc*2)
@@ -193,6 +265,7 @@ class Player(Point):
             Xfc,Yfc,Zfc = p.getXpos()-player.getXpos(),p.getYpos()-player.getYpos(),p.getZpos()-player.getZpos()
             SumOfPoints += math.sqrt(Zfc**2+Xfc**2+Yfc**2)
         return SumOfPoints/len(polypoints)
+    
     def calculateAverageDistanceOfShape(self,shape,player):
         Xfc,Yfc,Zfc = shape.getXpos()-player.getXpos(),shape.getYpos()-player.getYpos(),shape.getZpos()-player.getZpos()
         return math.sqrt(Zfc**2+Xfc**2+Yfc**2)
@@ -233,21 +306,25 @@ while running == True:
         player1.setZpos(player1.getZpos()-5*MoveMultiplyer*math.cos(math.radians(player1.getXRotation())))
         player1.setXpos(player1.getXpos()-5*MoveMultiplyer*math.sin(math.radians(player1.getXRotation())))
     if keys[pygame.K_d]:
-        player1.setZpos(player1.getZpos()+5*MoveMultiplyer*math.sin(math.radians(180-player1.getXRotation())))
-        player1.setXpos(player1.getXpos()+5*MoveMultiplyer*math.cos(math.radians(180-player1.getXRotation())))
+        player1.setZpos(player1.getZpos()+5*MoveMultiplyer*math.sin(math.radians(180-player1.getXRotation()))*-1)
+        player1.setXpos(player1.getXpos()+5*MoveMultiplyer*math.cos(math.radians(180-player1.getXRotation()))*-1)
     if keys[pygame.K_a]:
-        player1.setZpos(player1.getZpos()-5*MoveMultiplyer*math.sin(math.radians(180-player1.getXRotation())))
-        player1.setXpos(player1.getXpos()-5*MoveMultiplyer*math.cos(math.radians(180-player1.getXRotation())))
+        player1.setZpos(player1.getZpos()-5*MoveMultiplyer*math.sin(math.radians(180-player1.getXRotation()))*-1)
+        player1.setXpos(player1.getXpos()-5*MoveMultiplyer*math.cos(math.radians(180-player1.getXRotation()))*-1)
     if keys[pygame.K_SPACE]:
         player1.setYpos(player1.getYpos()-5*MoveMultiplyer)
     if keys[pygame.K_LCTRL]:
         player1.setYpos(player1.getYpos()+5*MoveMultiplyer)
-    # if keys[pygame.K_c]:
-    #     player1.setXRotation(player1.getXRotation()+0.1*MoveMultiplyer)
-    # if keys[pygame.K_v]:
-    #     player1.setYRotation(player1.getYRotation()-0.1*MoveMultiplyer)
-    player1.setXRotation(player1.getXRotation()+(Width/2-mouse.get_pos()[0])*0.01)
-    player1.setYRotation(player1.getYRotation()+(Hieght/2-mouse.get_pos()[1])*0.01)
+    if keys[pygame.K_z]:
+        player1.setXRotation(player1.getXRotation()-0.01*MoveMultiplyer)
+    if keys[pygame.K_x]:
+        player1.setXRotation(player1.getXRotation()+0.01*MoveMultiplyer)
+    if keys[pygame.K_c]:
+        player1.setYRotation(player1.getYRotation()+0.01*MoveMultiplyer)
+    if keys[pygame.K_v]:
+            player1.setYRotation(player1.getYRotation()-0.01*MoveMultiplyer)
+    # player1.setXRotation(player1.getXRotation()+(Width/2-mouse.get_pos()[0])*0.02)
+    # player1.setYRotation(player1.getYRotation()+(Hieght/2-mouse.get_pos()[1])*0.02)
 
     def CADP(x):
         return player1.calculateAverageDistanceOfShape(x,player1)*-1
@@ -266,7 +343,7 @@ while running == True:
     ####################################################
     mouse.set_pos(Width/2,Hieght/2)
     pygame.display.flip()
-    
+print(Hieght/2)
 # print(-1%360)
 # [
 # [[420, 220, 50], [380, 220, 50], [380, 180, 50], [420, 180, 50]],
